@@ -1,0 +1,21 @@
+<h1>My Rentals</h1>
+
+@if (loading()) {
+  <p>Loading...</p>
+} @else if (bookings().length === 0) {
+  <p>You haven't booked any cars yet.</p>
+} @else {
+  <div class="list">
+    @for (booking of bookings(); track booking.bookingRef) {
+      <div class="row">
+        <img [src]="booking.car.image || 'https://placehold.co/160x100?text=Car'" [alt]="booking.car.name" />
+        <div class="info">
+          <h3>{{ booking.car.name }}</h3>
+          <p>{{ booking.startsAt | slice:0:10 }} → {{ booking.endsAt | slice:0:10 }}</p>
+          <p class="ref">Confirmation: {{ booking.bookingRef }} · {{ booking.status }}</p>
+        </div>
+        <div class="total">${{ booking.total }}</div>
+      </div>
+    }
+  </div>
+}

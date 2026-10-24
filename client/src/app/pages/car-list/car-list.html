@@ -1,0 +1,20 @@
+<h1>Available Cars</h1>
+
+@if (loading()) {
+  <p>Loading fleet...</p>
+} @else if (error()) {
+  <p class="error">{{ error() }}</p>
+} @else {
+  <div class="grid">
+    @for (car of cars(); track car.id) {
+      <a class="card" [routerLink]="['/cars', car.id]">
+        <img [src]="car.image || 'https://placehold.co/400x240?text=Car'" [alt]="car.name" />
+        <div class="body">
+          <h3>{{ car.name }}</h3>
+          <p class="category">{{ car.category }} · {{ car.metadata.seats }} seats · {{ car.metadata.transmission }}</p>
+          <p class="price">${{ car.price }}/day</p>
+        </div>
+      </a>
+    }
+  </div>
+}

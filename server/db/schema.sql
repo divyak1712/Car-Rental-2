@@ -1,0 +1,43 @@
+CREATE TABLE IF NOT EXISTS users (
+  id VARCHAR(36) PRIMARY KEY,
+  email VARCHAR(255) NOT NULL UNIQUE,
+  password_hash VARCHAR(255) NOT NULL,
+  name VARCHAR(255),
+  is_admin BOOLEAN NOT NULL DEFAULT FALSE,
+  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB;
+
+CREATE TABLE IF NOT EXISTS sessions (
+  id VARCHAR(64) PRIMARY KEY,
+  user_id VARCHAR(36) NOT NULL,
+  expires_at DATETIME NOT NULL,
+  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+) ENGINE=InnoDB;
+
+CREATE TABLE IF NOT EXISTS resources (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  name VARCHAR(255) NOT NULL,
+  category VARCHAR(255) NOT NULL,
+  description TEXT NOT NULL,
+  image VARCHAR(1024),
+  price DECIMAL(10,2) NOT NULL,
+  capacity INT NOT NULL DEFAULT 1,
+  metadata JSON NOT NULL
+) ENGINE=InnoDB;
+
+CREATE TABLE IF NOT EXISTS bookings (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  booking_ref VARCHAR(64) NOT NULL UNIQUE,
+  resource_id INT NOT NULL,
+  user_id VARCHAR(36) NOT NULL,
+  starts_at DATETIME NOT NULL,
+  ends_at DATETIME NOT NULL,
+  status VARCHAR(32) NOT NULL DEFAULT 'confirmed',
+  total DECIMAL(10,2) NOT NULL,
+  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (resource_id) REFERENCES resources(id),
+  FOREIGN KEY (user_id) REFERENCES users(id),
+  UNIQUE KEY uq_resource_slot (resource_id, starts_at),
+  INDEX idx_bookings_resource_range (resource_id, starts_at, ends_at)
+) ENGINE=InnoDB;

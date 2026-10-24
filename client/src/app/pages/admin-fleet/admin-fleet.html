@@ -1,0 +1,56 @@
+<h1>Fleet Admin</h1>
+
+@if (error()) {
+  <p class="error">{{ error() }}</p>
+}
+
+@if (editingId() === null) {
+  <button (click)="startCreate()">+ Add car</button>
+} @else {
+  <form class="car-form" (ngSubmit)="save()">
+    <h2>{{ editingId() === -1 ? 'Add car' : 'Edit car' }}</h2>
+    <div class="fields">
+      <label>Name <input name="name" [(ngModel)]="form.name" required /></label>
+      <label>Category <input name="category" [(ngModel)]="form.category" required /></label>
+      <label>Description <textarea name="description" [(ngModel)]="form.description" required></textarea></label>
+      <label>Image URL <input name="image" [(ngModel)]="form.image" /></label>
+      <label>Daily rate ($) <input type="number" name="price" [(ngModel)]="form.price" required min="0" /></label>
+      <label>Make <input name="make" [(ngModel)]="form.metadata.make" required /></label>
+      <label>Model <input name="model" [(ngModel)]="form.metadata.model" required /></label>
+      <label>Year <input type="number" name="year" [(ngModel)]="form.metadata.year" required /></label>
+      <label>License plate <input name="licensePlate" [(ngModel)]="form.metadata.licensePlate" required /></label>
+      <label>Seats <input type="number" name="seats" [(ngModel)]="form.metadata.seats" required /></label>
+      <label>Transmission <input name="transmission" [(ngModel)]="form.metadata.transmission" required /></label>
+      <label>Fuel type <input name="fuelType" [(ngModel)]="form.metadata.fuelType" required /></label>
+      <label>Location <input name="location" [(ngModel)]="form.metadata.location" required /></label>
+    </div>
+    <div class="actions">
+      <button type="submit">Save</button>
+      <button type="button" (click)="cancel()">Cancel</button>
+    </div>
+  </form>
+}
+
+@if (loading()) {
+  <p>Loading...</p>
+} @else {
+  <table class="fleet-table">
+    <thead>
+      <tr><th>Name</th><th>Category</th><th>Plate</th><th>Rate</th><th></th></tr>
+    </thead>
+    <tbody>
+      @for (car of cars(); track car.id) {
+        <tr>
+          <td>{{ car.name }}</td>
+          <td>{{ car.category }}</td>
+          <td>{{ car.metadata.licensePlate }}</td>
+          <td>${{ car.price }}/day</td>
+          <td class="row-actions">
+            <button (click)="startEdit(car)">Edit</button>
+            <button class="danger" (click)="remove(car)">Delete</button>
+          </td>
+        </tr>
+      }
+    </tbody>
+  </table>
+}

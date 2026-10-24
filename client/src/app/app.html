@@ -1,0 +1,20 @@
+<header class="topbar">
+  <a class="brand" routerLink="/">🚗 Car Rental</a>
+  <nav>
+    @if (auth.session()) {
+      <a routerLink="/account/rentals">My Rentals</a>
+      @if (auth.session()?.isAdmin) {
+        <a routerLink="/admin/fleet">Fleet Admin</a>
+      }
+      <span class="user">{{ auth.session()?.name || auth.session()?.email }}</span>
+      <button (click)="signOut()">Sign out</button>
+    } @else {
+      <a routerLink="/login">Sign in</a>
+      <a routerLink="/signup">Sign up</a>
+    }
+  </nav>
+</header>
+
+<main class="page">
+  <router-outlet />
+</main>

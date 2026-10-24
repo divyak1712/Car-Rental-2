@@ -1,0 +1,62 @@
+@if (loading()) {
+  <p>Loading...</p>
+} @else if (!car()) {
+  <p class="error">{{ error() }}</p>
+} @else {
+  <div class="detail">
+    <img [src]="car()!.image || 'https://placehold.co/600x360?text=Car'" [alt]="car()!.name" />
+
+    <div class="info">
+      <h1>{{ car()!.name }}</h1>
+      <p class="category">{{ car()!.category }}</p>
+      <p>{{ car()!.description }}</p>
+
+      <ul class="specs">
+        <li><strong>Make/Model:</strong> {{ car()!.metadata.make }} {{ car()!.metadata.model }} ({{ car()!.metadata.year }})</li>
+        <li><strong>Seats:</strong> {{ car()!.metadata.seats }}</li>
+        <li><strong>Transmission:</strong> {{ car()!.metadata.transmission }}</li>
+        <li><strong>Fuel:</strong> {{ car()!.metadata.fuelType }}</li>
+        <li><strong>Pickup location:</strong> {{ car()!.metadata.location }}</li>
+      </ul>
+
+      <p class="price">${{ car()!.price }}/day</p>
+
+      @if (bookedRanges().length > 0) {
+        <div class="booked">
+          <strong>Already booked:</strong>
+          <ul>
+            @for (range of bookedRanges(); track range.startsAt) {
+              <li>{{ range.startsAt | slice:0:10 }} → {{ range.endsAt | slice:0:10 }}</li>
+            }
+          </ul>
+        </div>
+      }
+
+      <form class="booking-form" (ngSubmit)="submitBooking()">
+        <label>
+          Pickup date
+          <input type="date" name="startsAt" [(ngModel)]="startsAt" required />
+        </label>
+        <label>
+          Return date
+          <input type="date" name="endsAt" [(ngModel)]="endsAt" required />
+        </label>
+
+        @if (estimatedTotal() !== null) {
+          <p class="estimate">Estimated total: ${{ estimatedTotal() }}</p>
+        }
+
+        @if (error()) {
+          <p class="error">{{ error() }}</p>
+        }
+        @if (success()) {
+          <p class="success">{{ success() }}</p>
+        }
+
+        <button type="submit" [disabled]="submitting()">
+          {{ submitting() ? 'Booking...' : 'Book this car' }}
+        </button>
+      </form>
+    </div>
+  </div>
+}
